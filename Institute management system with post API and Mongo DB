@@ -1,0 +1,209 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+from tkinter import filedialog
+from pymongo import MongoClient
+
+class Registration_Form:
+    
+    def __init__(self):
+        self.root = tk.Tk()
+        self.client = MongoClient("mongodb://localhost:27017/")  # Use your MongoDB connection string
+        self.db = self.client["user_data_db"]
+        self.users_collection = self.db["users"]
+        self.user_data = {}
+
+        # Menus
+        self.menu_bar = tk.Menu(self.root)
+        self.root.config(menu=self.menu_bar)
+        self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="File", menu=self.file_menu)
+        self.file_menu.add_command(label="New file", command=lambda: messagebox.showinfo("Success", "New file is created successfully."))
+        self.file_menu.add_command(label="Open file", command=lambda: filedialog.askopenfilename(title="Open file"))
+        self.file_menu.add_command(label="Recent files")
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Save")
+        self.file_menu.add_command(label="Save as", command=lambda: filedialog.askopenfilename(title="Save as"))
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Quit", command=self.app_quit)
+
+        # Note_book
+        self.Tabs = ttk.Notebook(self.root)
+
+        # Frame
+        self.registrationTab = ttk.Frame(self.Tabs)
+        self.loginTab = ttk.Frame(self.Tabs)
+
+        self.Tabs.add(self.registrationTab, text="Registration")
+        self.Tabs.add(self.loginTab, text="Login")
+
+        self.Tabs.pack(expand=1, fill="y")
+
+        # initializing Tabs
+        self.init_regitration_tab()
+        self.init_login_tab()
+
+        # Window Size
+        self.root.title("Widgets App")
+        self.root.geometry("650x500")
+
+        self.root.mainloop()
+
+    def init_regitration_tab(self):  
+        frame_title = ttk.LabelFrame(self.registrationTab, text="Registration")
+        frame_title.grid(row=0, column=0, padx=10)
+        
+        #Email
+        # Labels
+        lable_Name = ttk.Label(frame_title , text="Email :" , font=('Arial' , 10))
+        lable_Name.grid(row=1 , column=0 ,  padx=5 , pady=5 ,sticky=tk.W)
+        # Entry
+        entry_name = ttk.Entry(frame_title  , font=('Arial' , 10) )
+        entry_name.grid(row=1 , column=1 , padx=5 , pady=5 ,sticky=tk.W)
+
+        #Password
+        # Labels
+        lable_Name = ttk.Label(frame_title , text="Password :" , font=('Arial' , 10))
+        lable_Name.grid(row=2 , column=0 ,  padx=5 , pady=5 ,sticky=tk.W)
+        # Entry
+        entry_name = ttk.Entry(frame_title  , font=('Arial' , 10) )
+        entry_name.grid(row=2 , column=1 , padx=5 , pady=5 ,sticky=tk.W)
+
+        #Confirm Password
+        # Labels
+        lable_Name = ttk.Label(frame_title , text="Confirm Password :" , font=('Arial' , 10))
+        lable_Name.grid(row=3 , column=0 ,  padx=5 , pady=5 ,sticky=tk.W)
+        # Entry
+        entry_name = ttk.Entry(frame_title  , font=('Arial' , 10) ,show="*" )
+        entry_name.grid(row=3 , column=1 , padx=5 , pady=5 ,sticky=tk.W)
+
+        #First Name
+        # Labels
+        lable_Name = ttk.Label(frame_title , text="First Name :" , font=('Arial' , 10))
+        lable_Name.grid(row=4 , column=0 ,  padx=5 , pady=5 ,sticky=tk.W)
+        # Entry
+        entry_name = ttk.Entry(frame_title  , font=('Arial' , 10) )
+        entry_name.grid(row=4 , column=1 , padx=5 , pady=5 ,sticky=tk.W)
+
+        #Last Name
+        # Labels
+        lable_Name = ttk.Label(frame_title , text="Last Name :" , font=('Arial' , 10))
+        lable_Name.grid(row=4 , column=2 ,  padx=10 , pady=5,sticky=tk.W )
+        # Entry
+        entry_name = ttk.Entry(frame_title  , font=('Arial' , 10) )
+        entry_name.grid(row=4 , column=3 , padx=5 , pady=5 ,sticky=tk.W)
+
+
+
+        #Radio btns
+        gender_value = tk.StringVar()
+        gender_male = ttk.Radiobutton(frame_title , text="Male" , variable=gender_value , value="Male")
+        gender_male.grid(row=5 , column=0 ,padx=5, pady=15 , sticky=tk.W)
+        gender_female = ttk.Radiobutton(frame_title , text="Female" , variable=gender_value , value="Female")
+        gender_female.grid(row=5 , column=1, padx=5, pady=15 ,sticky=tk.W)
+
+
+        #Country 
+        lable_country = ttk.Label(frame_title , text="Chose your Country :" , font=('Arial' , 8))
+        lable_country.grid(row=6 , column=0 ,  padx=5 , pady=5 ,sticky=tk.W)
+        country_value = ['Choose one','Pakistan' , 'India' , 'China' , 'Bangladesh' , 'United States' , 'Iran' , 'Saudia Arabia']
+        country_dropdown = ttk.Combobox(frame_title ,  values= country_value)
+        country_dropdown.set(value=country_value[0])
+        country_dropdown.grid(row=6 , column=1 , padx=2 , pady=5 ,sticky=tk.W)
+
+        #Checkbox btns
+        term_check = ttk.Checkbutton(frame_title , text="I agree with terms and conditions" )
+        term_check.grid(row=7 , column=0 ,padx=5, pady=15 , sticky=tk.W)
+        newsletter_check = ttk.Checkbutton(frame_title , text="I want to recieve the news-letters"  )
+        newsletter_check.grid(row=8 , column=0 ,padx=5, sticky=tk.W)
+
+        # Registration Button
+        register_btn = ttk.Button(frame_title, text="Register", command=self.registered_sucess)
+        register_btn.grid(row=9, column=0, padx=5, pady=10, sticky=tk.W + tk.E)
+
+    def init_login_tab(self):
+        frame_title = ttk.LabelFrame(self.loginTab, text="Login")
+        frame_title.grid(row=0, column=0, padx=20, pady=5)
+
+        #Email
+        # Labels
+        lable_Name = ttk.Label(frame_title , text="Email :" , font=('Arial' , 10))
+        lable_Name.grid(row=1 , column=0 ,  padx=5 , pady=5 ,sticky=tk.W)
+        # Entry
+        entry_name = ttk.Entry(frame_title  , font=('Arial' , 10) )
+        entry_name.grid(row=1 , column=1 , padx=5 , pady=5 ,sticky=tk.W)
+
+        #Password
+        # Labels
+        lable_Name = ttk.Label(frame_title , text="Password :" , font=('Arial' , 10))
+        lable_Name.grid(row=2 , column=0 ,  padx=5 , pady=5 ,sticky=tk.W)
+        # Entry
+        entry_name = ttk.Entry(frame_title  , font=('Arial' , 10) , show="*" )
+        entry_name.grid(row=2 , column=1 , padx=5 , pady=5 ,sticky=tk.W)
+        
+        #Remember_me check
+        Remember_check = ttk.Checkbutton(frame_title , text="Remember me" )
+        Remember_check.grid(row=3 , column=0 ,padx=5 , pady=20 , sticky=tk.W)
+
+        #empty labels
+        space_labels = ttk.Label(frame_title , text="")
+        space_labels.grid(row=4 , column=0)
+        space_labels = ttk.Label(frame_title , text="")
+        space_labels.grid(row=5 , column=0)
+
+        # Login Button
+        login_btn = ttk.Button(frame_title, text="LOGIN", command=self.login_sucess)
+        login_btn.grid(row=6, column=0, padx=5, pady=10, sticky=tk.W + tk.E)
+
+    def registered_sucess(self):
+        # Retrieve data from registration fields
+        email = self.user_data.get("email", "")
+        password = self.user_data.get("password", "")
+        first_name = self.user_data.get("first_name", "")
+        last_name = self.user_data.get("last_name", "")
+        gender = self.user_data.get("gender", "")
+        country = self.user_data.get("country", "")
+        terms_accepted = self.user_data.get("terms_accepted", False)
+        newsletters_subscribed = self.user_data.get("newsletters_subscribed", False)
+
+        # Save data to MongoDB
+        user_data = {
+            "email": email,
+            "password": password,
+            "first_name": first_name,
+            "last_name": last_name,
+            "gender": gender,
+            "country": country,
+            "terms_accepted": terms_accepted,
+            "newsletters_subscribed": newsletters_subscribed,
+        }
+        self.users_collection.insert_one(user_data)
+
+        # Display the retrieved data
+        message = f"Registration Successful!\n\nEmail: {email}\nPassword: {password}\n" \
+                  f"First Name: {first_name}\nLast Name: {last_name}\nGender: {gender}\n" \
+                  f"Country: {country}\nTerms Accepted: {terms_accepted}\n" \
+                  f"Newsletters Subscribed: {newsletters_subscribed}"
+        messagebox.showinfo("Success", message)
+
+    def login_sucess(self):
+        # Retrieve data from login fields
+        email = self.user_data.get("login_email", "")
+        password = self.user_data.get("login_password", "")
+        remember_me = self.user_data.get("remember_me", False)
+
+        # Check if the user exists in MongoDB
+        user = self.users_collection.find_one({"email": email, "password": password})
+        if user:
+            # Display the retrieved data
+            message = f"Login Successful!\n\nEmail: {email}\nPassword: {password}\nRemember Me: {remember_me}"
+            messagebox.showinfo("Success", message)
+        else:
+            messagebox.showerror("Error", "Invalid email or password")
+
+    def app_quit(self):
+        if messagebox.askyesno(title="Quit?", message="Do you really want to quit?"):
+            self.root.destroy()
+
+if __name__ == "__main__":
+    Registration_Form()
