@@ -3,6 +3,8 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
 from pymongo import MongoClient
+import requests 
+
 
 class Registration_Form:
     
@@ -200,6 +202,15 @@ class Registration_Form:
             messagebox.showinfo("Success", message)
         else:
             messagebox.showerror("Error", "Invalid email or password")
+
+                    # Make request to the Flask API
+        api_url = "http://127.0.0.1:5000/api/user"
+        response = requests.get(api_url)
+        if response.status_code == 200:
+            user_data_from_api = response.json()
+            print("User data from API:", user_data_from_api)
+        else:
+            print("Error fetching user data from API")
 
     def app_quit(self):
         if messagebox.askyesno(title="Quit?", message="Do you really want to quit?"):
